@@ -165,8 +165,8 @@ function Weight() {
         )}
 
         {!latest && (
-          <p className="py-4 text-center text-[13px] text-ink-soft">
-            {t("noWeightRange")}
+          <p className="rounded-[var(--radius-card)] bg-lime-soft px-5 py-4 text-center text-[13px] text-lime-strong shadow-sm">
+            {t("emptyWeightHint")}
           </p>
         )}
       </div>

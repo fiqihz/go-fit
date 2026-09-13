@@ -197,7 +197,7 @@ function Summary() {
 
         {entries !== null && !hasData ? (
           <p className="rounded-[var(--radius-card)] bg-surface px-5 py-6 text-center text-[14px] text-ink-soft shadow-sm">
-            {t("noDataRange")}
+            {weights.length === 0 ? t("emptySummaryHint") : t("noDataRange")}
           </p>
         ) : hasData ? (
           <>

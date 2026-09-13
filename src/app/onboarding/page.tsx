@@ -6,9 +6,11 @@ import { Target } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { IntroTour } from "@/components/IntroTour";
 import { useAuth } from "@/lib/auth/provider";
 import { useI18n } from "@/lib/i18n/provider";
 import * as repo from "@/lib/supabase/repo";
+import { markTourSeen } from "@/lib/tour";
 import type { DailyGoals } from "@/lib/domain/types";
 
 export default function OnboardingPage() {
@@ -21,6 +23,7 @@ export default function OnboardingPage() {
   const [fat, setFat] = useState("65");
   const [protein, setProtein] = useState("150");
   const [busy, setBusy] = useState(false);
+  const [showTour, setShowTour] = useState(false);
 
   // Guard: must be signed in; skip if already onboarded.
   useEffect(() => {
@@ -51,10 +54,17 @@ export default function OnboardingPage() {
     };
     try {
       await repo.saveGoals(goals, { onboarded: markOnboarded });
-      router.replace("/");
+      // Show the intro tour once, then head to the diary.
+      setShowTour(true);
     } finally {
       setBusy(false);
     }
+  }
+
+  function closeTour() {
+    markTourSeen();
+    setShowTour(false);
+    router.replace("/");
   }
 
   return (
@@ -75,6 +85,10 @@ export default function OnboardingPage() {
             {t("onboardSubtitle")}
           </p>
         </div>
+
+        <p className="mb-4 rounded-xl bg-lime-soft px-4 py-3 text-[13px] text-lime-strong">
+          {t("onboardContext")}
+        </p>
 
         <div className="space-y-3.5">
           <Field
@@ -134,6 +148,8 @@ export default function OnboardingPage() {
           </Button>
         </div>
       </div>
+
+      <IntroTour open={showTour} onClose={closeTour} />
     </main>
   );
 }

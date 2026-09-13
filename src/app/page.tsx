@@ -75,6 +75,12 @@ function Diary() {
           </p>
         )}
 
+        {!loading && entries.length === 0 && (
+          <p className="rounded-xl bg-lime-soft px-4 py-3 text-[13px] text-lime-strong">
+            {t("emptyDiaryHint")}
+          </p>
+        )}
+
         {MEAL_TYPES.map((meal) => (
           <MealSection
             key={meal}

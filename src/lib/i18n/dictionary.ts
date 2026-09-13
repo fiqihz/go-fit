@@ -112,8 +112,36 @@ export const dictionary = {
     onboardTitle: "Set your daily targets",
     onboardSubtitle:
       "These are the goals you'll track against each day. You can change them anytime in Settings.",
+    onboardContext:
+      "We use these to calculate your remaining calories and macros each day.",
     getStarted: "Start tracking",
     skipForNow: "Skip for now",
+
+    // Intro tour
+    tourNext: "Next",
+    tourBack: "Back",
+    tourSkip: "Skip",
+    tourDone: "Start tracking",
+    tourDiaryTitle: "Log your day",
+    tourDiaryBody:
+      "Add what you eat under Breakfast, Lunch, Snack, or Dinner. The ring shows calories against your goal, with a bar for each macro.",
+    tourWeightTitle: "Track your weight",
+    tourWeightBody:
+      "Log your body weight each day. go-fit keeps a 30-day history so you can see which way it's heading.",
+    tourSummaryTitle: "See your trends",
+    tourSummaryBody:
+      "Pick a week, a month, or a custom range to see your weight trend plus nutrition totals and daily averages.",
+    tourSettingsTitle: "Make it yours",
+    tourSettingsBody:
+      "Change your daily targets or switch between English and Bahasa Indonesia anytime in Settings.",
+
+    // Empty states
+    emptyDiaryHint:
+      "Nothing logged yet. Tap Add food under any meal to start your day.",
+    emptyWeightHint:
+      "No weight logged yet. Enter today's weight above to start your history.",
+    emptySummaryHint:
+      "Log meals and weight to see totals, averages, and your weight trend here.",
 
     // Auth
     signIn: "Sign in",
@@ -232,8 +260,34 @@ export const dictionary = {
     onboardTitle: "Atur target harianmu",
     onboardSubtitle:
       "Ini target yang akan kamu kejar tiap hari. Bisa diubah kapan saja di Pengaturan.",
+    onboardContext:
+      "Target ini dipakai untuk menghitung sisa kalori dan makro kamu tiap hari.",
     getStarted: "Mulai catat",
     skipForNow: "Lewati dulu",
+
+    tourNext: "Lanjut",
+    tourBack: "Kembali",
+    tourSkip: "Lewati",
+    tourDone: "Mulai catat",
+    tourDiaryTitle: "Catat harimu",
+    tourDiaryBody:
+      "Tambahkan makananmu di Sarapan, Makan Siang, Camilan, atau Makan Malam. Ring menunjukkan kalori terhadap targetmu, dengan bar untuk tiap makro.",
+    tourWeightTitle: "Pantau beratmu",
+    tourWeightBody:
+      "Catat berat badanmu tiap hari. go-fit menyimpan riwayat 30 hari supaya kamu bisa lihat arah trennya.",
+    tourSummaryTitle: "Lihat trenmu",
+    tourSummaryBody:
+      "Pilih rentang mingguan, bulanan, atau kustom untuk melihat tren berat plus total dan rata-rata gizi harian.",
+    tourSettingsTitle: "Sesuaikan",
+    tourSettingsBody:
+      "Ubah target harian atau ganti bahasa (Inggris / Indonesia) kapan saja di Pengaturan.",
+
+    emptyDiaryHint:
+      "Belum ada catatan. Ketuk Tambah makanan di sesi mana pun untuk memulai harimu.",
+    emptyWeightHint:
+      "Belum ada berat tercatat. Masukkan berat hari ini di atas untuk memulai riwayatmu.",
+    emptySummaryHint:
+      "Catat makanan dan berat untuk melihat total, rata-rata, dan tren beratmu di sini.",
 
     signIn: "Masuk",
     signUp: "Buat akun",

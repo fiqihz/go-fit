@@ -60,8 +60,12 @@ Semua turunan dari `context.md` (tujuan awal) plus iterasi lanjutan:
    tombol prev/next hari; bisa isi tanggal backdate berapa pun (maks hari ini).
 8. **In-app reminder berat badan** — banner di diary + badge dot di tab Weight
    bila berat hari ini belum diisi. (Push notification sengaja tidak dipakai.)
-9. **Onboarding** (`/onboarding`) — setelah register, user diarahkan mengisi
-   target harian dulu sebelum masuk diary.
+9. **Onboarding + intro tour** (`/onboarding`) — setelah register, user
+   diarahkan mengisi target harian dulu (ada 1 kalimat konteks kegunaannya).
+   Setelah submit, muncul **intro carousel** (bottom sheet, swipe/next/skip)
+   yang menjelaskan tiap halaman: Diary, Weight, Summary, Settings. Flag
+   `gofit.tourSeen` disimpan di localStorage (sekali tampil). Tiap halaman juga
+   punya **empty-state hint** saat datanya kosong.
 10. **Dwibahasa EN/ID** — toggle di login & settings, tersimpan di localStorage.
 11. **PWA** — installable, offline app-shell, favicon/ikon daun (lime).
 
@@ -120,6 +124,7 @@ src/
 │  ├─ AddFoodSheet.tsx       # bottom sheet: library search / quick add / edit
 │  ├─ WeightReminder.tsx     # banner "berat hari ini belum dicatat"
 │  ├─ WeightTrend.tsx        # sparkline SVG tren berat (no chart lib)
+│  ├─ IntroTour.tsx          # carousel pengenalan halaman (first-run)
 │  ├─ LanguageToggle.tsx     # segmented EN/ID
 │  └─ ui/
 │     ├─ Button.tsx          # variant primary/secondary/ghost/danger, ≥44px
@@ -129,6 +134,7 @@ src/
 └─ lib/
    ├─ domain/types.ts        # Nutrients, Food, MealEntry, BodyWeight, DailyGoals,
    │                         # MEAL_TYPES, sumNutrients(), zeroNutrients()
+   ├─ tour.ts                # hasSeenTour()/markTourSeen() — flag localStorage
    ├─ utils.ts               # cn, date helpers (toISODate, addDays, todayISO,
    │                         # startOfWeekISO, startOfMonthISO), round1, clamp01
    ├─ i18n/
@@ -186,7 +192,9 @@ exists`), jadi aman di-run ulang di SQL Editor.
   - sudah sign in tapi `onboarded = false` → redirect `/onboarding`.
 - Setelah register (session langsung aktif) → `/onboarding`. Jika email
   confirmation aktif, user diminta konfirmasi email dulu lalu sign in.
-- `/onboarding` menyimpan target + set `onboarded = true`, lalu ke `/`.
+- `/onboarding` menyimpan target + set `onboarded = true`, menampilkan intro
+  tour sekali (`IntroTour` + flag `gofit.tourSeen` di `src/lib/tour.ts`), lalu
+  ke `/`.
 
 ---
 
