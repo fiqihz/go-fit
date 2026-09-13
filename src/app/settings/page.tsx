@@ -10,6 +10,7 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { useAuth } from "@/lib/auth/provider";
 import { useI18n } from "@/lib/i18n/provider";
 import { useDiaryStore } from "@/lib/store/diary-store";
+import { parseNum } from "@/lib/utils";
 import type { DailyGoals } from "@/lib/domain/types";
 
 export default function SettingsPage() {
@@ -52,10 +53,10 @@ function Settings() {
     setBusy(true);
     setSaved(false);
     const next: DailyGoals = {
-      calories: Math.max(0, Number(calories) || 0),
-      carbs_g: Math.max(0, Number(carbs) || 0),
-      fat_g: Math.max(0, Number(fat) || 0),
-      protein_g: Math.max(0, Number(protein) || 0),
+      calories: Math.max(0, parseNum(calories)),
+      carbs_g: Math.max(0, parseNum(carbs)),
+      fat_g: Math.max(0, parseNum(fat)),
+      protein_g: Math.max(0, parseNum(protein)),
     };
     try {
       await saveGoals(next);

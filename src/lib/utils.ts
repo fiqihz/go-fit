@@ -56,3 +56,15 @@ export function clamp01(n: number): number {
   if (Number.isNaN(n)) return 0;
   return Math.min(1, Math.max(0, n));
 }
+
+/**
+ * Parse user-entered numeric text into a number, tolerating a comma decimal
+ * separator (e.g. "65,7" → 65.7) that some mobile keyboards produce. Returns 0
+ * for empty/invalid input.
+ */
+export function parseNum(value: string): number {
+  const normalized = value.trim().replace(",", ".");
+  if (normalized === "") return 0;
+  const n = Number(normalized);
+  return Number.isFinite(n) ? n : 0;
+}

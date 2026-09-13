@@ -10,6 +10,13 @@ interface FieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 /** Labeled input with a large touch target and optional unit suffix. */
 export function Field({ label, suffix, className, id, ...props }: FieldProps) {
   const inputId = id ?? props.name;
+  // For number inputs, default step to "any" so decimals (e.g. 65.7) are
+  // accepted. Without this, the browser's default step="1" rejects decimals
+  // and some mobile keyboards hide the decimal separator.
+  const stepProp =
+    props.type === "number" && props.step === undefined
+      ? { step: "any" }
+      : {};
   return (
     <label htmlFor={inputId} className="block">
       <span className="mb-1.5 block text-[13px] font-medium text-ink-soft">
@@ -23,6 +30,7 @@ export function Field({ label, suffix, className, id, ...props }: FieldProps) {
             suffix && "pr-12",
             className,
           )}
+          {...stepProp}
           {...props}
         />
         {suffix && (

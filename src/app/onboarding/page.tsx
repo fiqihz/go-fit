@@ -11,6 +11,7 @@ import { useAuth } from "@/lib/auth/provider";
 import { useI18n } from "@/lib/i18n/provider";
 import * as repo from "@/lib/supabase/repo";
 import { markTourSeen } from "@/lib/tour";
+import { parseNum } from "@/lib/utils";
 import type { DailyGoals } from "@/lib/domain/types";
 
 export default function OnboardingPage() {
@@ -47,10 +48,10 @@ export default function OnboardingPage() {
   async function finish(markOnboarded: boolean) {
     setBusy(true);
     const goals: DailyGoals = {
-      calories: Math.max(0, Number(calories) || 0),
-      carbs_g: Math.max(0, Number(carbs) || 0),
-      fat_g: Math.max(0, Number(fat) || 0),
-      protein_g: Math.max(0, Number(protein) || 0),
+      calories: Math.max(0, parseNum(calories)),
+      carbs_g: Math.max(0, parseNum(carbs)),
+      fat_g: Math.max(0, parseNum(fat)),
+      protein_g: Math.max(0, parseNum(protein)),
     };
     try {
       await repo.saveGoals(goals, { onboarded: markOnboarded });

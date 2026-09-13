@@ -10,7 +10,7 @@ import { useI18n } from "@/lib/i18n/provider";
 import * as repo from "@/lib/supabase/repo";
 import { useReminderStore } from "@/lib/store/reminder-store";
 import type { BodyWeight } from "@/lib/domain/types";
-import { addDays, round1, todayISO } from "@/lib/utils";
+import { addDays, parseNum, round1, todayISO } from "@/lib/utils";
 
 export default function WeightPage() {
   return (
@@ -51,7 +51,7 @@ function Weight() {
   }, [load]);
 
   async function handleSave() {
-    const w = Number(value);
+    const w = parseNum(value);
     if (!w || w <= 0) return;
     setBusy(true);
     setSaved(false);
@@ -102,7 +102,7 @@ function Weight() {
                 suffix={t("kg")}
               />
             </div>
-            <Button onClick={handleSave} disabled={busy || !Number(value)}>
+            <Button onClick={handleSave} disabled={busy || parseNum(value) <= 0}>
               {busy ? t("saving") : t("saveWeight")}
             </Button>
           </div>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { useI18n } from "@/lib/i18n/provider";
 import { useDiaryStore } from "@/lib/store/diary-store";
+import { parseNum } from "@/lib/utils";
 import type { EntryInput } from "@/lib/supabase/repo";
 import type { Food, MealEntry, MealType } from "@/lib/domain/types";
 
@@ -25,7 +26,7 @@ interface Props {
   onClose: () => void;
 }
 
-const num = (v: string) => (v.trim() === "" ? 0 : Math.max(0, Number(v) || 0));
+const num = (v: string) => Math.max(0, parseNum(v));
 
 const MEAL_LABEL: Record<MealType, "breakfast" | "lunch" | "snack" | "dinner"> =
   { breakfast: "breakfast", lunch: "lunch", snack: "snack", dinner: "dinner" };
