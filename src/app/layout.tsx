@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   title: "go-fit — nutrition tracker",
   description: "Track your daily nutrition and hit your targets.",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icons/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
