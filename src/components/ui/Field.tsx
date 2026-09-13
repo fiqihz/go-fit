@@ -10,13 +10,21 @@ interface FieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 /** Labeled input with a large touch target and optional unit suffix. */
 export function Field({ label, suffix, className, id, ...props }: FieldProps) {
   const inputId = id ?? props.name;
-  // For number inputs, default step to "any" so decimals (e.g. 65.7) are
-  // accepted. Without this, the browser's default step="1" rejects decimals
-  // and some mobile keyboards hide the decimal separator.
-  const stepProp =
-    props.type === "number" && props.step === undefined
-      ? { step: "any" }
-      : {};
+
+  // Decimal inputs: render as type="text" instead of type="number". On iOS a
+  // number input with a comma-locale keyboard disables the "," key (spec allows
+  // only "." as decimal), so users can't type "73,5". type="text" +
+  // inputMode="decimal" keeps the numeric keypad but lets the comma through;
+  // parseNum() normalizes "," → "." on save. Whole-number inputs (numeric) keep
+  // type="number" with step="any".
+  const typeProps: React.InputHTMLAttributes<HTMLInputElement> = {};
+  if (props.type === "number" && props.inputMode === "decimal") {
+    typeProps.type = "text";
+    typeProps.pattern = "[0-9]*[.,]?[0-9]*";
+  } else if (props.type === "number" && props.step === undefined) {
+    typeProps.step = "any";
+  }
+
   return (
     <label htmlFor={inputId} className="block">
       <span className="mb-1.5 block text-[13px] font-medium text-ink-soft">
@@ -30,8 +38,8 @@ export function Field({ label, suffix, className, id, ...props }: FieldProps) {
             suffix && "pr-12",
             className,
           )}
-          {...stepProp}
           {...props}
+          {...typeProps}
         />
         {suffix && (
           <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[14px] font-medium text-ink-soft">
