@@ -1,6 +1,12 @@
 /** Core domain types for go-fit. */
 
-export const MEAL_TYPES = ["breakfast", "lunch", "snack", "dinner"] as const;
+export const MEAL_TYPES = [
+  "breakfast",
+  "lunch",
+  "snack",
+  "dinner",
+  "additional",
+] as const;
 export type MealType = (typeof MEAL_TYPES)[number];
 
 /** The four nutrition metrics tracked across the app. */

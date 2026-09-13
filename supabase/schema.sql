@@ -53,7 +53,7 @@ create table if not exists meal_entries (
   user_id      uuid not null references auth.users(id) on delete cascade,
   food_id      uuid references foods(id) on delete set null, -- optional link to library
   entry_date   date not null,
-  meal_type    text not null check (meal_type in ('breakfast','lunch','snack','dinner')),
+  meal_type    text not null check (meal_type in ('breakfast','lunch','snack','dinner','additional')),
   name         text not null,              -- snapshot of the food name
   serving      text,
   calories     numeric(8,2) not null default 0 check (calories >= 0),
@@ -65,6 +65,13 @@ create table if not exists meal_entries (
   updated_at   timestamptz not null default now()
 );
 create index if not exists idx_meal_entries_user_date on meal_entries(user_id, entry_date);
+
+-- Safe to re-run: widen the meal_type check to include 'additional' if the
+-- table predates it.
+alter table meal_entries drop constraint if exists meal_entries_meal_type_check;
+alter table meal_entries
+  add constraint meal_entries_meal_type_check
+  check (meal_type in ('breakfast','lunch','snack','dinner','additional'));
 
 -- ----------------------------------------------------------------------------
 -- 4. BODY WEIGHTS (one entry per user per date)

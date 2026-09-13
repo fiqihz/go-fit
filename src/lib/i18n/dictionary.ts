@@ -22,6 +22,7 @@ export const dictionary = {
     lunch: "Lunch",
     snack: "Snack",
     dinner: "Dinner",
+    additional: "Additional",
 
     // Nutrients
     calories: "Calories",
@@ -179,6 +180,7 @@ export const dictionary = {
     lunch: "Makan Siang",
     snack: "Camilan",
     dinner: "Makan Malam",
+    additional: "Tambahan",
 
     calories: "Kalori",
     carbs: "Karbo",

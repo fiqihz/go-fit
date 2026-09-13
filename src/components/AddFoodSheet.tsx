@@ -6,6 +6,7 @@ import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { useI18n } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 import { useDiaryStore } from "@/lib/store/diary-store";
 import { parseNum } from "@/lib/utils";
 import type { EntryInput } from "@/lib/supabase/repo";
@@ -28,8 +29,13 @@ interface Props {
 
 const num = (v: string) => Math.max(0, parseNum(v));
 
-const MEAL_LABEL: Record<MealType, "breakfast" | "lunch" | "snack" | "dinner"> =
-  { breakfast: "breakfast", lunch: "lunch", snack: "snack", dinner: "dinner" };
+const MEAL_LABEL: Record<MealType, TranslationKey> = {
+  breakfast: "breakfast",
+  lunch: "lunch",
+  snack: "snack",
+  dinner: "dinner",
+  additional: "additional",
+};
 
 export function AddFoodSheet({ open, target, date, onClose }: Props) {
   const { t } = useI18n();

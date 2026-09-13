@@ -40,7 +40,7 @@ Semua turunan dari `context.md` (tujuan awal) plus iterasi lanjutan:
    - Ring kalori (SVG) sebagai hero: angka tengah = `Goal − Eaten` (label
      "left/sisa" bila positif, "over/lebih" + ring merah bila negatif).
    - Tiga macro bar (Carbs, Fat, Protein), tiap makro punya warna sendiri.
-   - Empat meal section: Breakfast, Lunch, Snack, Dinner. Header tiap meal
+   - Lima meal section: Breakfast, Lunch, Snack, Dinner, Additional. Header tiap meal
      menampilkan total kalori (kalkulasi real dari sum item, tanpa unit
      redundan).
    - Tambah/edit/hapus entry lewat bottom sheet.
@@ -172,7 +172,8 @@ semua di-scope per user via RLS (`auth.uid() = user_id`).
 - **`foods`** (library) — `id`, `user_id`, `name`, `serving`, `calories`,
   `carbs_g`, `fat_g`, `protein_g`, timestamps.
 - **`meal_entries`** — `id`, `user_id`, `food_id` (nullable, link ke library),
-  `entry_date`, `meal_type` (`breakfast|lunch|snack|dinner`), `name`, `serving`,
+  `entry_date`, `meal_type` (`breakfast|lunch|snack|dinner|additional`),
+  `name`, `serving`,
   makro, `logged_time`, timestamps.
 - **`body_weights`** — `id`, `user_id`, `entry_date`, `weight_kg`,
   unique `(user_id, entry_date)`.

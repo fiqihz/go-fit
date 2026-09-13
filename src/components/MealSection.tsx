@@ -2,6 +2,7 @@
 
 import { Plus } from "lucide-react";
 import { useI18n } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 import type { MealEntry, MealType } from "@/lib/domain/types";
 import { round1 } from "@/lib/utils";
 
@@ -12,13 +13,13 @@ interface Props {
   onEdit: (entry: MealEntry) => void;
 }
 
-const MEAL_LABEL: Record<MealType, "breakfast" | "lunch" | "snack" | "dinner"> =
-  {
-    breakfast: "breakfast",
-    lunch: "lunch",
-    snack: "snack",
-    dinner: "dinner",
-  };
+const MEAL_LABEL: Record<MealType, TranslationKey> = {
+  breakfast: "breakfast",
+  lunch: "lunch",
+  snack: "snack",
+  dinner: "dinner",
+  additional: "additional",
+};
 
 export function MealSection({ mealType, entries, onAdd, onEdit }: Props) {
   const { t } = useI18n();

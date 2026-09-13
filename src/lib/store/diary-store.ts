@@ -163,6 +163,7 @@ export function groupByMeal(entries: MealEntry[]): Record<MealType, MealEntry[]>
     lunch: [],
     snack: [],
     dinner: [],
+    additional: [],
   };
   for (const e of entries) groups[e.mealType].push(e);
   return groups;
