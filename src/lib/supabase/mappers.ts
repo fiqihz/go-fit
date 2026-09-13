@@ -4,6 +4,7 @@ import type {
   Food,
   MealEntry,
   MealType,
+  WaterEntry,
 } from "@/lib/domain/types";
 
 /** Row shapes as returned by Supabase (snake_case). */
@@ -12,6 +13,7 @@ type GoalsRow = {
   target_carbs_g: number | string;
   target_fat_g: number | string;
   target_protein_g: number | string;
+  target_water_ml?: number | string;
 };
 
 type FoodRow = {
@@ -44,6 +46,13 @@ type WeightRow = {
   weight_kg: number | string;
 };
 
+type WaterRow = {
+  id: string;
+  entry_date: string;
+  amount_ml: number | string;
+  logged_time: string | null;
+};
+
 const num = (v: number | string): number =>
   typeof v === "number" ? v : parseFloat(v) || 0;
 
@@ -53,6 +62,7 @@ export function mapGoals(row: GoalsRow): DailyGoals {
     carbs_g: num(row.target_carbs_g),
     fat_g: num(row.target_fat_g),
     protein_g: num(row.target_protein_g),
+    waterMl: row.target_water_ml != null ? num(row.target_water_ml) : 2500,
   };
 }
 
@@ -89,5 +99,14 @@ export function mapWeight(row: WeightRow): BodyWeight {
     id: row.id,
     entryDate: row.entry_date,
     weightKg: num(row.weight_kg),
+  };
+}
+
+export function mapWater(row: WaterRow): WaterEntry {
+  return {
+    id: row.id,
+    entryDate: row.entry_date,
+    amountMl: num(row.amount_ml),
+    loggedTime: row.logged_time ? row.logged_time.slice(0, 5) : null,
   };
 }

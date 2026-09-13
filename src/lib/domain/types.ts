@@ -17,7 +17,10 @@ export interface Nutrients {
   protein_g: number;
 }
 
-export type DailyGoals = Nutrients;
+export interface DailyGoals extends Nutrients {
+  /** Daily water target in milliliters. */
+  waterMl: number;
+}
 
 export interface Food extends Nutrients {
   id: string;
@@ -39,6 +42,13 @@ export interface BodyWeight {
   id: string;
   entryDate: string; // YYYY-MM-DD
   weightKg: number;
+}
+
+export interface WaterEntry {
+  id: string;
+  entryDate: string; // YYYY-MM-DD
+  amountMl: number;
+  loggedTime: string | null; // HH:MM
 }
 
 /** Empty nutrient accumulator. */

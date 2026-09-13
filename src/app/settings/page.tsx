@@ -35,6 +35,7 @@ function Settings() {
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
   const [protein, setProtein] = useState("");
+  const [water, setWater] = useState("");
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -47,6 +48,7 @@ function Settings() {
     setCarbs(String(goals.carbs_g));
     setFat(String(goals.fat_g));
     setProtein(String(goals.protein_g));
+    setWater(String(goals.waterMl));
   }, [goals]);
 
   async function handleSave() {
@@ -57,6 +59,7 @@ function Settings() {
       carbs_g: Math.max(0, parseNum(carbs)),
       fat_g: Math.max(0, parseNum(fat)),
       protein_g: Math.max(0, parseNum(protein)),
+      waterMl: Math.max(0, parseNum(water)),
     };
     try {
       await saveGoals(next);
@@ -134,6 +137,18 @@ function Settings() {
                 suffix={t("grams")}
               />
             </div>
+            <Field
+              label={t("targetWater")}
+              name="twater"
+              type="number"
+              inputMode="numeric"
+              value={water}
+              onChange={(e) => {
+                setWater(e.target.value);
+                setSaved(false);
+              }}
+              suffix={t("ml")}
+            />
             <Button onClick={handleSave} disabled={busy} fullWidth>
               {busy ? t("saving") : t("saveTargets")}
             </Button>

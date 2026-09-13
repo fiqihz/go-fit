@@ -51,6 +51,9 @@ Semua turunan dari `context.md` (tujuan awal) plus iterasi lanjutan:
    **Quick add** (ketik manual), dengan opsi "save to my foods" saat quick add.
 4. **Target harian custom** (`/settings`) — kalori + 3 makro, bisa diubah
    kapan saja. Dipakai untuk kalkulasi remaining di diary.
+4b. **Water tracking** — di Diary: bar progress air (biru) di bawah macro bars +
+   `WaterCard` untuk log (quick +250/+500 ml + jumlah kustom, akumulasi harian,
+   list entry + hapus). Target `waterMl` di goals. Total + rata-rata di Summary.
 5. **Body weight** (`/weight`) — input berat harian (backdate didukung),
    riwayat 30 hari, delta perubahan vs entry sebelumnya.
 6. **Summary by range** (`/summary`) — preset chip (Minggu ini / Bulan ini /
@@ -127,6 +130,7 @@ src/
 │  ├─ AddFoodSheet.tsx       # bottom sheet: library search / quick add / edit
 │  ├─ WeightReminder.tsx     # banner "berat hari ini belum dicatat"
 │  ├─ WeightTrend.tsx        # sparkline SVG tren berat (no chart lib)
+│  ├─ WaterCard.tsx          # log air (quick-add + custom + list) di Diary
 │  ├─ IntroTour.tsx          # carousel pengenalan halaman (first-run)
 │  ├─ LanguageToggle.tsx     # segmented EN/ID
 │  └─ ui/
@@ -168,7 +172,8 @@ Skema lengkap di [`supabase/schema.sql`](./supabase/schema.sql). Empat tabel,
 semua di-scope per user via RLS (`auth.uid() = user_id`).
 
 - **`daily_goals`** (1 baris per user) — `target_calories`, `target_carbs_g`,
-  `target_fat_g`, `target_protein_g`, `onboarded` (boolean), `updated_at`.
+  `target_fat_g`, `target_protein_g`, `target_water_ml`, `onboarded` (boolean),
+  `updated_at`.
 - **`foods`** (library) — `id`, `user_id`, `name`, `serving`, `calories`,
   `carbs_g`, `fat_g`, `protein_g`, timestamps.
 - **`meal_entries`** — `id`, `user_id`, `food_id` (nullable, link ke library),
@@ -177,6 +182,8 @@ semua di-scope per user via RLS (`auth.uid() = user_id`).
   makro, `logged_time`, timestamps.
 - **`body_weights`** — `id`, `user_id`, `entry_date`, `weight_kg`,
   unique `(user_id, entry_date)`.
+- **`water_entries`** — `id`, `user_id`, `entry_date`, `amount_ml`,
+  `logged_time` (banyak entry per hari, diakumulasi jadi total harian).
 
 **RLS:** tiap tabel `enable row level security` + policy `for all using
 (auth.uid() = user_id)`. **Trigger:** `on_auth_user_created` menyisipkan baris

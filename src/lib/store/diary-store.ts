@@ -9,6 +9,7 @@ import {
   type MealEntry,
   type MealType,
   type Nutrients,
+  type WaterEntry,
 } from "@/lib/domain/types";
 import * as repo from "@/lib/supabase/repo";
 import type { EntryInput } from "@/lib/supabase/repo";
@@ -19,6 +20,7 @@ interface DiaryState {
   goals: DailyGoals;
   entries: MealEntry[];
   foods: Food[];
+  water: WaterEntry[];
   loading: boolean;
   error: string | null;
 
@@ -30,6 +32,9 @@ interface DiaryState {
   addEntry: (input: EntryInput, saveToLibrary: boolean) => Promise<void>;
   editEntry: (id: string, input: EntryInput) => Promise<void>;
   removeEntry: (id: string) => Promise<void>;
+
+  addWater: (amountMl: number) => Promise<void>;
+  removeWater: (id: string) => Promise<void>;
 
   saveGoals: (
     goals: DailyGoals,
@@ -45,6 +50,7 @@ const DEFAULT_GOALS: DailyGoals = {
   carbs_g: 250,
   fat_g: 65,
   protein_g: 150,
+  waterMl: 2500,
 };
 
 export const useDiaryStore = create<DiaryState>((set, get) => ({
@@ -52,6 +58,7 @@ export const useDiaryStore = create<DiaryState>((set, get) => ({
   goals: DEFAULT_GOALS,
   entries: [],
   foods: [],
+  water: [],
   loading: false,
   error: null,
 
@@ -63,12 +70,13 @@ export const useDiaryStore = create<DiaryState>((set, get) => ({
   async loadAll() {
     set({ loading: true, error: null });
     try {
-      const [goals, entries, foods] = await Promise.all([
+      const [goals, entries, foods, water] = await Promise.all([
         repo.fetchGoals(),
         repo.fetchEntries(get().date),
         repo.fetchFoods(),
+        repo.fetchWater(get().date),
       ]);
-      set({ goals, entries, foods, loading: false });
+      set({ goals, entries, foods, water, loading: false });
     } catch (e) {
       set({ loading: false, error: (e as Error).message });
     }
@@ -77,8 +85,11 @@ export const useDiaryStore = create<DiaryState>((set, get) => ({
   async reloadEntries() {
     set({ loading: true, error: null });
     try {
-      const entries = await repo.fetchEntries(get().date);
-      set({ entries, loading: false });
+      const [entries, water] = await Promise.all([
+        repo.fetchEntries(get().date),
+        repo.fetchWater(get().date),
+      ]);
+      set({ entries, water, loading: false });
     } catch (e) {
       set({ loading: false, error: (e as Error).message });
     }
@@ -127,6 +138,29 @@ export const useDiaryStore = create<DiaryState>((set, get) => ({
     }
   },
 
+  async addWater(amountMl) {
+    const now = new Date();
+    const loggedTime = `${String(now.getHours()).padStart(2, "0")}:${String(
+      now.getMinutes(),
+    ).padStart(2, "0")}`;
+    const created = await repo.createWater({
+      entryDate: get().date,
+      amountMl,
+      loggedTime,
+    });
+    set({ water: [...get().water, created] });
+  },
+
+  async removeWater(id) {
+    const prev = get().water;
+    set({ water: prev.filter((w) => w.id !== id) }); // optimistic
+    try {
+      await repo.deleteWater(id);
+    } catch (e) {
+      set({ water: prev, error: (e as Error).message });
+    }
+  },
+
   async saveGoals(goals, opts) {
     await repo.saveGoals(goals, opts);
     set({ goals });
@@ -148,11 +182,17 @@ export const useDiaryStore = create<DiaryState>((set, get) => ({
       goals: DEFAULT_GOALS,
       entries: [],
       foods: [],
+      water: [],
       loading: false,
       error: null,
     });
   },
 }));
+
+/** Total water consumed (ml) across the given entries. */
+export function totalWater(water: WaterEntry[]): number {
+  return water.reduce((s, w) => s + w.amountMl, 0);
+}
 
 // --- Selectors / helpers -----------------------------------------------------
 

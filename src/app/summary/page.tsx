@@ -14,6 +14,7 @@ import {
   type BodyWeight,
   type MealEntry,
   type Nutrients,
+  type WaterEntry,
 } from "@/lib/domain/types";
 import {
   addDays,
@@ -66,6 +67,7 @@ function Summary() {
   const [end, setEnd] = useState(todayISO());
   const [entries, setEntries] = useState<MealEntry[] | null>(null);
   const [weights, setWeights] = useState<BodyWeight[]>([]);
+  const [waters, setWaters] = useState<WaterEntry[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -76,12 +78,14 @@ function Summary() {
       setError(null);
       const [rs, re] = rangeFor(p, s, e);
       try {
-        const [meals, w] = await Promise.all([
+        const [meals, w, wat] = await Promise.all([
           repo.fetchEntriesRange(rs, re),
           repo.fetchWeightsRange(rs, re),
+          repo.fetchWaterRange(rs, re),
         ]);
         setEntries(meals);
         setWeights(w);
+        setWaters(wat);
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -101,10 +105,14 @@ function Summary() {
     if (p !== "custom") run(p, start, end);
   }
 
-  const { totals, dayCount, avg } = useMemo(() => {
+  const { totals, dayCount, avg, waterTotal, waterAvg } = useMemo(() => {
     const list = entries ?? [];
     const totals = sumNutrients(list);
-    const days = new Set(list.map((e) => e.entryDate));
+    // Days counted = union of days with meals or water logged.
+    const days = new Set<string>([
+      ...list.map((e) => e.entryDate),
+      ...waters.map((w) => w.entryDate),
+    ]);
     const dayCount = days.size;
     const avg: Nutrients =
       dayCount > 0
@@ -115,10 +123,12 @@ function Summary() {
             protein_g: totals.protein_g / dayCount,
           }
         : { calories: 0, carbs_g: 0, fat_g: 0, protein_g: 0 };
-    return { totals, dayCount, avg };
-  }, [entries]);
+    const waterTotal = waters.reduce((s, w) => s + w.amountMl, 0);
+    const waterAvg = dayCount > 0 ? waterTotal / dayCount : 0;
+    return { totals, dayCount, avg, waterTotal, waterAvg };
+  }, [entries, waters]);
 
-  const hasData = (entries?.length ?? 0) > 0;
+  const hasData = (entries?.length ?? 0) > 0 || waters.length > 0;
 
   return (
     <div className="pb-6">
@@ -204,9 +214,15 @@ function Summary() {
             <TotalsCard
               title={t("totals")}
               data={totals}
+              water={waterTotal}
               sub={`${dayCount} ${t("daysLogged")}`}
             />
-            <TotalsCard title={t("dailyAverage")} data={avg} sub={t("perDay")} />
+            <TotalsCard
+              title={t("dailyAverage")}
+              data={avg}
+              water={waterAvg}
+              sub={t("perDay")}
+            />
           </>
         ) : null}
       </div>
@@ -277,10 +293,12 @@ function WeightTrendCard({ weights }: { weights: BodyWeight[] }) {
 function TotalsCard({
   title,
   data,
+  water,
   sub,
 }: {
   title: string;
   data: Nutrients;
+  water: number;
   sub: string;
 }) {
   const { t } = useI18n();
@@ -290,6 +308,7 @@ function TotalsCard({
       { label: t("carbs"), value: data.carbs_g, unit: t("grams"), color: "var(--color-carb)" },
       { label: t("fat"), value: data.fat_g, unit: t("grams"), color: "var(--color-fat)" },
       { label: t("protein"), value: data.protein_g, unit: t("grams"), color: "var(--color-protein)" },
+      { label: t("water"), value: water, unit: t("ml"), color: "var(--color-water)" },
     ];
   return (
     <section className="rounded-[var(--radius-card)] bg-surface p-5 shadow-sm">

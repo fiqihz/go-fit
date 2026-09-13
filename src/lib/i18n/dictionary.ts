@@ -29,8 +29,10 @@ export const dictionary = {
     carbs: "Carbs",
     fat: "Fat",
     protein: "Protein",
+    water: "Water",
     kcal: "kcal",
     grams: "g",
+    ml: "ml",
 
     // Diary
     today: "Today",
@@ -42,6 +44,13 @@ export const dictionary = {
     addFood: "Add food",
     noEntriesMeal: "Nothing logged yet.",
     caloriesLeft: "left",
+
+    // Water
+    waterIntake: "Water intake",
+    addWater: "Add water",
+    customAmount: "Custom amount",
+    noWaterYet: "No water logged yet today.",
+    targetWater: "Target water",
 
     // Add food sheet
     addTo: "Add to",
@@ -186,8 +195,10 @@ export const dictionary = {
     carbs: "Karbo",
     fat: "Lemak",
     protein: "Protein",
+    water: "Air",
     kcal: "kkal",
     grams: "g",
+    ml: "ml",
 
     today: "Hari ini",
     remaining: "sisa",
@@ -198,6 +209,12 @@ export const dictionary = {
     addFood: "Tambah makanan",
     noEntriesMeal: "Belum ada catatan.",
     caloriesLeft: "sisa",
+
+    waterIntake: "Asupan air",
+    addWater: "Tambah air",
+    customAmount: "Jumlah kustom",
+    noWaterYet: "Belum ada air tercatat hari ini.",
+    targetWater: "Target air",
 
     addTo: "Tambah ke",
     searchLibrary: "Cari makananmu",

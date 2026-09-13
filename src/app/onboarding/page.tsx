@@ -23,6 +23,7 @@ export default function OnboardingPage() {
   const [carbs, setCarbs] = useState("250");
   const [fat, setFat] = useState("65");
   const [protein, setProtein] = useState("150");
+  const [water, setWater] = useState("2500");
   const [busy, setBusy] = useState(false);
   const [showTour, setShowTour] = useState(false);
 
@@ -52,6 +53,7 @@ export default function OnboardingPage() {
       carbs_g: Math.max(0, parseNum(carbs)),
       fat_g: Math.max(0, parseNum(fat)),
       protein_g: Math.max(0, parseNum(protein)),
+      waterMl: Math.max(0, parseNum(water)),
     };
     try {
       await repo.saveGoals(goals, { onboarded: markOnboarded });
@@ -130,6 +132,15 @@ export default function OnboardingPage() {
               suffix={t("grams")}
             />
           </div>
+          <Field
+            label={t("targetWater")}
+            name="owater"
+            type="number"
+            inputMode="numeric"
+            value={water}
+            onChange={(e) => setWater(e.target.value)}
+            suffix={t("ml")}
+          />
 
           <Button
             onClick={() => finish(true)}

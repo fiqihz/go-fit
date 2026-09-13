@@ -19,13 +19,16 @@ create table if not exists daily_goals (
   target_carbs_g   numeric(7,2) not null default 250 check (target_carbs_g >= 0),
   target_fat_g     numeric(7,2) not null default 65  check (target_fat_g >= 0),
   target_protein_g numeric(7,2) not null default 150 check (target_protein_g >= 0),
+  target_water_ml  integer not null default 2500 check (target_water_ml >= 0),
   onboarded        boolean not null default false,
   updated_at       timestamptz not null default now()
 );
 
--- Safe to re-run: add the onboarding flag if the table predates this column.
+-- Safe to re-run: add columns if the table predates them.
 alter table daily_goals
   add column if not exists onboarded boolean not null default false;
+alter table daily_goals
+  add column if not exists target_water_ml integer not null default 2500;
 
 -- ----------------------------------------------------------------------------
 -- 2. FOODS (personal reusable library)
@@ -87,13 +90,27 @@ create table if not exists body_weights (
 );
 create index if not exists idx_body_weights_user_date on body_weights(user_id, entry_date);
 
+-- ----------------------------------------------------------------------------
+-- 5. WATER ENTRIES (many entries per day; accumulate to a daily total)
+-- ----------------------------------------------------------------------------
+create table if not exists water_entries (
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid not null references auth.users(id) on delete cascade,
+  entry_date   date not null,
+  amount_ml    integer not null check (amount_ml > 0),
+  logged_time  time,
+  created_at   timestamptz not null default now()
+);
+create index if not exists idx_water_entries_user_date on water_entries(user_id, entry_date);
+
 -- ============================================================================
 -- ROW LEVEL SECURITY — every table is scoped to auth.uid()
 -- ============================================================================
-alter table daily_goals  enable row level security;
-alter table foods        enable row level security;
-alter table meal_entries enable row level security;
-alter table body_weights enable row level security;
+alter table daily_goals   enable row level security;
+alter table foods         enable row level security;
+alter table meal_entries  enable row level security;
+alter table body_weights  enable row level security;
+alter table water_entries enable row level security;
 
 -- daily_goals
 drop policy if exists "own goals" on daily_goals;
@@ -113,6 +130,11 @@ create policy "own meal_entries" on meal_entries
 -- body_weights
 drop policy if exists "own body_weights" on body_weights;
 create policy "own body_weights" on body_weights
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- water_entries
+drop policy if exists "own water_entries" on water_entries;
+create policy "own water_entries" on water_entries
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- ----------------------------------------------------------------------------

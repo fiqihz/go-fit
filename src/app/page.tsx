@@ -7,11 +7,13 @@ import { DailySummaryCard } from "@/components/DailySummaryCard";
 import { MealSection } from "@/components/MealSection";
 import { AddFoodSheet, type AddFoodTarget } from "@/components/AddFoodSheet";
 import { WeightReminder } from "@/components/WeightReminder";
+import { WaterCard } from "@/components/WaterCard";
 import { useAuth } from "@/lib/auth/provider";
 import { useI18n } from "@/lib/i18n/provider";
 import {
   groupByMeal,
   totalForEntries,
+  totalWater,
   useDiaryStore,
 } from "@/lib/store/diary-store";
 import { useReminderStore } from "@/lib/store/reminder-store";
@@ -32,6 +34,7 @@ function Diary() {
   const date = useDiaryStore((s) => s.date);
   const goals = useDiaryStore((s) => s.goals);
   const entries = useDiaryStore((s) => s.entries);
+  const water = useDiaryStore((s) => s.water);
   const loading = useDiaryStore((s) => s.loading);
   const error = useDiaryStore((s) => s.error);
   const setDate = useDiaryStore((s) => s.setDate);
@@ -51,6 +54,7 @@ function Diary() {
 
   const groups = groupByMeal(entries);
   const consumed = totalForEntries(entries);
+  const waterConsumed = totalWater(water);
 
   function openAdd(mealType: MealType) {
     setTarget({ mealType });
@@ -67,7 +71,11 @@ function Diary() {
 
       <div className="mt-4 space-y-3">
         <WeightReminder />
-        <DailySummaryCard consumed={consumed} goals={goals} />
+        <DailySummaryCard
+          consumed={consumed}
+          goals={goals}
+          waterConsumed={waterConsumed}
+        />
 
         {error && (
           <p className="rounded-xl bg-danger/10 px-4 py-3 text-[13px] text-danger">
@@ -90,6 +98,8 @@ function Diary() {
             onEdit={openEdit}
           />
         ))}
+
+        <WaterCard />
 
         {loading && (
           <p className="py-2 text-center text-[13px] text-ink-soft">

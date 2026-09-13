@@ -9,9 +9,10 @@ import { round1 } from "@/lib/utils";
 interface Props {
   consumed: Nutrients;
   goals: DailyGoals;
+  waterConsumed: number;
 }
 
-export function DailySummaryCard({ consumed, goals }: Props) {
+export function DailySummaryCard({ consumed, goals, waterConsumed }: Props) {
   const { t } = useI18n();
 
   const remaining = goals.calories - consumed.calories;
@@ -76,6 +77,16 @@ export function DailySummaryCard({ consumed, goals }: Props) {
           goal={goals.protein_g}
           color="var(--color-protein)"
           unit={t("grams")}
+        />
+      </div>
+
+      <div className="mt-4">
+        <MacroBar
+          label={t("water")}
+          consumed={waterConsumed}
+          goal={goals.waterMl}
+          color="var(--color-water)"
+          unit={t("ml")}
         />
       </div>
     </section>
