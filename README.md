@@ -34,6 +34,8 @@ Referensi UI: MyFitnessPal (food diary + ring kalori). Dwibahasa: EN / ID.
 
 Semua turunan dari `context.md` (tujuan awal) plus iterasi lanjutan:
 
+0. **Auth** — email/password + **Sign in / Sign up with Google** (Supabase
+   OAuth, via `/auth/callback`).
 1. **Diary harian** (`/`)
    - Ring kalori (SVG) sebagai hero: angka tengah = `Goal − Eaten` (label
      "left/sisa" bila positif, "over/lebih" + ring merah bila negatif).
@@ -105,7 +107,8 @@ src/
 │  ├─ globals.css            # Tailwind v4 @theme + design tokens + dark mode
 │  ├─ icon.png               # favicon (auto-detect Next → route /icon.png)
 │  ├─ page.tsx               # Diary (home)
-│  ├─ login/page.tsx         # sign in / sign up gabungan
+│  ├─ login/page.tsx         # sign in / sign up (email + Google)
+│  ├─ auth/callback/page.tsx # target redirect Google OAuth
 │  ├─ onboarding/page.tsx    # set target harian (first-time)
 │  ├─ weight/page.tsx        # input berat + riwayat 30 hari
 │  ├─ summary/page.tsx       # preset range + tren berat + totals/average
@@ -185,8 +188,20 @@ exists`), jadi aman di-run ulang di SQL Editor.
 
 ## Autentikasi & onboarding
 
-- Auth = Supabase email/password. `AuthProvider` menyimpan session dan
-  meng-subscribe `onAuthStateChange`.
+- Auth = Supabase email/password **+ Google OAuth**. `AuthProvider` menyimpan
+  session dan meng-subscribe `onAuthStateChange`. Google via
+  `signInWithGoogle()` → `supabase.auth.signInWithOAuth({ provider: "google" })`
+  dengan `redirectTo = <origin>/auth/callback`.
+- **`/auth/callback`** — target redirect OAuth. Supabase client pakai
+  `detectSessionInUrl`, jadi code di URL otomatis ditukar jadi session; halaman
+  ini menunggu session lalu route ke `/onboarding` (baru) atau `/` (lama).
+- **Setup Google OAuth (wajib, di dashboard — bukan kode):**
+  1. Google Cloud Console → buat OAuth Client ID (Web application). Authorized
+     redirect URI = `https://<project-ref>.supabase.co/auth/v1/callback`.
+  2. Supabase → Authentication → Providers → Google → enable, tempel Client ID
+     + Secret.
+  3. Supabase → URL Configuration → Redirect URLs harus memuat
+     `https://<domain>/auth/callback` dan `http://localhost:3000/auth/callback`.
 - **Guard** ada di `AppShell`:
   - belum sign in → redirect `/login`.
   - sudah sign in tapi `onboarded = false` → redirect `/onboarding`.

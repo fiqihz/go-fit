@@ -17,6 +17,7 @@ interface AuthValue {
   configured: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<{ needsConfirm: boolean }>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -73,6 +74,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // If email confirmation is required, there is no active session yet.
         const needsConfirm = !data.session;
         return { needsConfirm };
+      },
+      async signInWithGoogle() {
+        const redirectTo =
+          typeof window !== "undefined"
+            ? `${window.location.origin}/auth/callback`
+            : undefined;
+        const { error } = await getSupabase().auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo },
+        });
+        if (error) throw error;
+        // Browser redirects to Google, then back to /auth/callback.
       },
       async signOut() {
         await getSupabase().auth.signOut();

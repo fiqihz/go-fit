@@ -156,6 +156,9 @@ export const dictionary = {
     checkEmail: "Check your email to confirm your account, then sign in.",
     supabaseMissing:
       "Supabase is not configured. Add your keys to .env to sign in.",
+    continueWithGoogle: "Continue with Google",
+    orDivider: "or",
+    signingIn: "Signing in…",
 
     // Generic
     loading: "Loading…",
@@ -301,6 +304,9 @@ export const dictionary = {
     checkEmail: "Cek emailmu untuk konfirmasi akun, lalu masuk.",
     supabaseMissing:
       "Supabase belum dikonfigurasi. Tambahkan kunci ke .env untuk masuk.",
+    continueWithGoogle: "Lanjut dengan Google",
+    orDivider: "atau",
+    signingIn: "Memproses…",
 
     loading: "Memuat…",
     saving: "Menyimpan…",

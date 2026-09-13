@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Leaf } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
@@ -13,13 +14,15 @@ type Mode = "signin" | "signup";
 
 export default function LoginPage() {
   const { t } = useI18n();
-  const { user, loading, configured, signIn, signUp } = useAuth();
+  const { user, loading, configured, signIn, signUp, signInWithGoogle } =
+    useAuth();
   const router = useRouter();
 
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [googleBusy, setGoogleBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -50,6 +53,19 @@ export default function LoginPage() {
       setError(t("authError"));
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleGoogle() {
+    setError(null);
+    setNotice(null);
+    setGoogleBusy(true);
+    try {
+      await signInWithGoogle();
+      // On success the browser redirects to Google; no further action here.
+    } catch {
+      setError(t("authError"));
+      setGoogleBusy(false);
     }
   }
 
@@ -116,6 +132,26 @@ export default function LoginPage() {
                 : t("signUpCta")}
           </Button>
         </form>
+
+        {/* Divider */}
+        <div className="my-5 flex items-center gap-3">
+          <span className="h-px flex-1 bg-line" />
+          <span className="text-[12px] font-medium uppercase text-ink-soft">
+            {t("orDivider")}
+          </span>
+          <span className="h-px flex-1 bg-line" />
+        </div>
+
+        {/* Google OAuth */}
+        <button
+          type="button"
+          onClick={handleGoogle}
+          disabled={googleBusy || !configured}
+          className="flex min-h-[48px] w-full select-none items-center justify-center gap-2.5 rounded-xl border border-line bg-surface text-[15px] font-semibold text-ink transition-transform active:scale-[0.98] disabled:opacity-50"
+        >
+          <Image src="/google.png" alt="" width={20} height={20} />
+          {googleBusy ? t("signingIn") : t("continueWithGoogle")}
+        </button>
 
         <div className="mt-5 text-center text-[14px] text-ink-soft">
           {mode === "signin" ? (
